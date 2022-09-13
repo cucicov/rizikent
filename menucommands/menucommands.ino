@@ -18,6 +18,8 @@
 #define SFX_RX 6
 #define MAX_DISTANCE 100
 
+#define TRACK_TIME_MILLIS 61000
+
 // Connect to the RST pin on the Sound Board
 #define SFX_RST 4
 
@@ -97,11 +99,11 @@ void loop() {
 
   // first trigger
 //  Serial.println(timePassedPlaying);
-  if (trackStop && average > MAX_DISTANCE) {
+  if (trackStop && average > MAX_DISTANCE && average > MAX_DISTANCE) {
     Serial.println("PLAY! T");
     digitalWrite(7,HIGH);
     
-    if (timePassedPlaying > 61000) {
+    if (timePassedPlaying > TRACK_TIME_MILLIS) {
       if (! sfx.playTrack((uint8_t)2) ) {
         Serial.println("Failed to play track?");
       }
@@ -114,7 +116,7 @@ void loop() {
   }
 
   // continue looping
-  if (!trackStop && timePassedPlaying > 3000) {
+  if (!trackStop && timePassedPlaying > TRACK_TIME_MILLIS) {
     timePassedPlaying = 0;
     timestamp = millis();
     
@@ -142,7 +144,7 @@ void loop() {
   delayMicroseconds(2);
   // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
   digitalWrite(trigPin, HIGH);
-  delayMicroseconds(2);
+  delayMicroseconds(10);
   digitalWrite(trigPin, LOW);
   // Reads the echoPin, returns the sound wave travel time in microseconds
   duration = pulseIn(echoPin, HIGH);
@@ -169,7 +171,7 @@ void loop() {
   // calculate the average:
   average = total / numReadings;
 
-  if (!trackStop && average < MAX_DISTANCE) {
+  if (!trackStop && average < MAX_DISTANCE && average > 0) {
     Serial.println("STOP!");
     digitalWrite(7,LOW);
     
